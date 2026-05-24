@@ -4,16 +4,17 @@ A task management web application built using React, Firebase Authentication, Cl
 
 ## Features
 
--- User Registration & Login using Firebase Authentication
--- User-specific task storage with Firestore
--- Add new tasks
--- Edit existing tasks
--- Delete tasks
--- Mark tasks as completed / undo
--- Filter tasks by category
--- Task counter
--- Responsive user interface
--- Deployed on Vercel
+- User Registration & Login with Firebase Authentication
+- User-specific task storage with Cloud Firestore
+- Add new tasks
+- Edit tasks
+- Delete tasks
+- Mark tasks as completed / incomplete
+- Filter tasks by category
+- Task counter
+- Empty state message
+- Responsive UI built with Tailwind CSS
+- Deployed on Vercel
 
 ## Tech Stack
 • React.js
@@ -29,4 +30,13 @@ https://todo-app-21.vercel.app/
 ## Installation
 
 Clone the repository:
-git clone your-repository-link
+git clone https://github.com/Nibah-Kondvilkar/todo-app.git
+
+Install dependencies:
+npm install
+
+Run locally:
+npm run dev
+
+
+
