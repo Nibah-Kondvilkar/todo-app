@@ -35,13 +35,13 @@ https://todo-app-21.vercel.app/
 
 ## Installation
 
-Clone the repository:  
+**Clone the repository:**  
 git clone https://github.com/Nibah-Kondvilkar/todo-app.git
 
-Install dependencies:  
+**Install dependencies:**  
 npm install
 
-Run locally:  
+**Run locally:**  
 npm run dev
 
 ## Author
