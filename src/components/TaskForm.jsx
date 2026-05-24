@@ -1,105 +1,109 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { TaskContext } from "../context/TaskContext";
 
-function TaskForm( { setShowForm } ){
+function TaskForm({ setShowForm, editTaskData = null }) {
+  const { addTask, editTask } = useContext(TaskContext);
 
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("Work");
+  const [priority, setPriority] = useState("Medium");
+  const [deadline, setDeadline] = useState("");
 
-const { addTask } = useContext(TaskContext);
+  useEffect(() => {
+    if (editTaskData) {
+      setTitle(editTaskData.title || "");
+      setCategory(editTaskData.category || "Work");
+      setPriority(editTaskData.priority || "Medium");
+      setDeadline(editTaskData.deadline || "");
+    }
+  }, [editTaskData]);
 
-const [title,setTitle] = useState("");
-const [category,setCategory] = useState("Work");
-const [priority,setPriority] = useState("Medium");
-const [deadline,setDeadline] = useState("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-const handleSubmit = (e) => {
+    if (!title.trim()) {
+      alert("Please enter task title");
+      return;
+    }
 
-e.preventDefault();
+    const taskData = {
+      title,
+      category,
+      priority,
+      deadline,
+      completed: editTaskData?.completed || false,
+    };
 
-if(!title){
-alert("Please enter task title");
-return;
-}
+    if (editTaskData) {
+      editTask(editTaskData.id, taskData);
+    } else {
+      addTask(taskData);
+    }
 
-addTask({
-title,
-category,
-priority,
-deadline,
-completed:false
-});
+    setTitle("");
+    setCategory("Work");
+    setPriority("Medium");
+    setDeadline("");
 
-setTitle("");
-setCategory("Work");
-setPriority("Medium");
-setDeadline("");
+    setShowForm(false);
+    setSelectedTask(null);
+  };
 
-setShowForm(false);
+  return (
+    <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+      <h2 className="text-lg font-semibold mb-4">
+        {editTaskData ? "Edit Task" : "Add New Task"}
+      </h2>
 
-};
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
 
-return(
+        <input
+          type="text"
+          placeholder="Task Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="border p-2 rounded"
+        />
 
-<div className="bg-white p-6 rounded-lg shadow-md mb-6">
+        <label>Task Category</label>
 
-<h2 className="text-lg font-semibold mb-4">
-Add New Task
-</h2>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="Work">Work</option>
+          <option value="Study">Study</option>
+          <option value="Personal">Personal</option>
+        </select>
 
-<form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <label>Priority</label>
 
-<input
-type="text"
-placeholder="Task Title"
-value={title}
-onChange={(e)=>setTitle(e.target.value)}
-className="border p-2 rounded"
-/>
+        <select
+          value={priority}
+          onChange={(e) => setPriority(e.target.value)}
+          className="border p-2 rounded"
+        >
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
 
-<label>Task Category</label>
+        <label>Deadline</label>
 
-<select
-value={category}
-onChange={(e)=>setCategory(e.target.value)}
-className="border p-2 rounded"
->
-<option value="Work">Work</option>
-<option value="Study">Study</option>
-<option value="Personal">Personal</option>
-</select>
+        <input
+          type="date"
+          value={deadline}
+          onChange={(e) => setDeadline(e.target.value)}
+          className="border p-2 rounded"
+        />
 
-<label>Priority</label>
-
-<select
-value={priority}
-onChange={(e)=>setPriority(e.target.value)}
-className="border p-2 rounded"
->
-<option value="High">High</option>
-<option value="Medium">Medium</option>
-<option value="Low">Low</option>
-</select>
-
-<label>Deadline</label>
-
-<input
-type="date"
-value={deadline}
-onChange={(e)=>setDeadline(e.target.value)}
-className="border p-2 rounded"
-/>
-
-<button
-className="bg-green-500 text-white p-2 rounded"
->
-Add Task
-</button>
-
-</form>
-
-</div>
-
-);
-
+        <button className="bg-green-500 text-white p-2 rounded">
+          {editTaskData ? "Update Task" : "Add Task"}
+        </button>
+      </form>
+    </div>
+  );
 }
 
 export default TaskForm;

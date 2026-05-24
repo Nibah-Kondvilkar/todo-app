@@ -15,28 +15,29 @@ const [user,setUser] = useState(null);
 const [showLogin,setShowLogin] = useState(true);
 const [filter,setFilter] = useState("all");
 const [showForm,setShowForm] = useState(false);
+const [isRegistering, setIsRegistering] = useState(false);
+const [selectedTask, setSelectedTask] = useState(null);
 
 
-// 🔹 Keep user logged in after refresh
-useEffect(()=>{
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    if (!isRegistering) {
+      setUser(currentUser);
+    }
+  });
 
-const unsubscribe = onAuthStateChanged(auth,(currentUser)=>{
-setUser(currentUser);
-});
-
-return ()=>unsubscribe();
-
-},[]);
+  return () => unsubscribe();
+}, [isRegistering]);
 
 
-// 🔹 Logout
+// Logout
 const logout = async ()=>{
 await signOut(auth);
 setUser(null);
 };
 
 
-// 🔹 Login/Register screen
+// Login/Register page
 if(!user){
 
 return(
@@ -74,7 +75,10 @@ Register
 
 <>
 
-<Register setShowLogin={setShowLogin}/>
+<Register
+  setShowLogin={setShowLogin}
+  setIsRegistering={setIsRegistering}
+/>
 
 <p className="text-center mt-4">
 
@@ -102,7 +106,7 @@ Login
 }
 
 
-// 🔹 Main Todo App UI
+// Main Todo App UI
 return(
 
 <TaskProvider>
@@ -124,7 +128,10 @@ Task Manager
 <div className="flex justify-between items-center mb-4">
 
 <button 
-onClick={()=>setShowForm(!showForm)}
+onClick={() => {
+  setSelectedTask(null);
+  setShowForm(!showForm);
+}}
 className="bg-blue-500 text-white px-4 py-2 rounded"
 >
 {showForm ? "Close" : "Add Task"}
@@ -134,9 +141,12 @@ className="bg-blue-500 text-white px-4 py-2 rounded"
 
 </div>
 
-{showForm && <TaskForm setShowForm={setShowForm} />}
+{showForm && <TaskForm setShowForm={setShowForm} editTaskData={selectedTask}
+    setSelectedTask={setSelectedTask}/>}
 
-<TaskList filter={filter}/>
+
+<TaskList filter={filter} setShowForm={setShowForm}
+  setSelectedTask={setSelectedTask}/>
 
 <button
 onClick={logout}

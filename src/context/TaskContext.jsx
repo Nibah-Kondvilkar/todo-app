@@ -11,50 +11,69 @@ export const TaskProvider = ({ children }) => {
 const [tasks,setTasks] = useState([]);
 
 
-const fetchTasks = async()=>{
+const fetchTasks = async () => {
+  const user = auth.currentUser;
 
-const user = auth.currentUser;
+  if (!user) return;
 
-if(!user) return;
+  const data = await getDocs(
+    collection(db, "users", user.uid, "tasks")
+  );
 
-const q = query(
-collection(db,"tasks"),
-where("userId","==",user.uid)
-);
-
-const data = await getDocs(q);
-
-setTasks(data.docs.map(doc=>({
-...doc.data(),
-id:doc.id
-})));
-
+  setTasks(
+    data.docs.map((doc) => ({
+      ...doc.data(),
+      id: doc.id,
+    }))
+  );
 };
 
-const addTask = async(task)=>{
+const addTask = async (task) => {
+  const user = auth.currentUser;
 
-const user = auth.currentUser;
+  if (!user) return;
 
-await addDoc(collection(db,"tasks"),{
-...task,
-userId: user.uid
-});
+  await addDoc(
+  collection(db, "users", user.uid, "tasks"),
+  {
+    ...task,
+  }
+);
 
-fetchTasks();
-
+  fetchTasks();
 };
 
 const deleteTask = async(id)=>{
-await deleteDoc(doc(db,"tasks",id));
+const user = auth.currentUser;
+await deleteDoc(
+  doc(db, "users", user.uid, "tasks", id)
+);
 fetchTasks();
 };
 
+const editTask = async (id, updatedTask) => {
+  const user = auth.currentUser;
+
+  if (!user) return;
+
+  await updateDoc(
+    doc(db, "users", user.uid, "tasks", id),
+    updatedTask
+  );
+
+  fetchTasks();
+};
 
 const toggleComplete = async(task)=>{
 
-await updateDoc(doc(db,"tasks",task.id),{
-completed: !task.completed
-});
+const user = auth.currentUser;
+
+await updateDoc(
+  doc(db, "users", user.uid, "tasks", task.id),
+  {
+    completed: !task.completed,
+  }
+);
 
 fetchTasks();
 
@@ -80,6 +99,7 @@ value={{
 tasks,
 addTask,
 deleteTask,
+editTask,
 toggleComplete
 }}
 >

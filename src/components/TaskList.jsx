@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import { TaskContext } from "../context/TaskContext";
 
-function TaskList({filter}){
+function TaskList({filter, setShowForm,
+  setSelectedTask,}){
 
-const { tasks, deleteTask, toggleComplete } = useContext(TaskContext);
+const { tasks, deleteTask, toggleComplete, editTask } = useContext(TaskContext);
 
 const priorityOrder = {
 High: 1,
@@ -25,19 +26,44 @@ return new Date(a.deadline) - new Date(b.deadline);
 });
 
 
-if(filtered.length === 0){
-return(
+if (filtered.length === 0) {
+  return (
+    <div>
+      {tasks.length === 0 ? (
+        <>
+          <div className="flex justify-between mb-4 text-sm text-gray-600 bg-white p-3 rounded-lg shadow-sm">
+            <p>Total: 0</p>
+            <p>Completed: 0</p>
+            <p>Pending: 0</p>
+          </div>
 
-<div className="text-center text-gray-500 mt-6">
-No tasks in this category
-</div>
-
-);
+          <div className="text-center text-gray-500 mt-6">
+            No tasks yet. Add your first task 🚀
+          </div>
+        </>
+      ) : (
+        <div className="text-center text-gray-500 mt-6">
+          No tasks found in this category
+        </div>
+      )}
+    </div>
+  );
 }
 
 return(
-
 <div>
+
+    <div className="flex justify-between mb-4 text-sm text-gray-600 bg-white p-3 rounded-lg shadow-sm">
+        <p>Total: {filtered.length}</p>
+
+        <p>
+            Completed: {filtered.filter(task => task.completed).length}
+        </p>
+
+        <p>
+            Pending: {filtered.filter(task => !task.completed).length}
+        </p>
+   </div>
 
 {filtered.map((task)=>{
 
@@ -89,16 +115,26 @@ Deadline: {task.deadline}
 
 <button
 onClick={()=>toggleComplete(task)}
-className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+className="bg-emerald-500 text-white px-3 py-1 rounded hover:bg-green-600"
 >
 {task.completed ? "Undo" : "Done"}
 </button>
 
 <button
-onClick={()=>deleteTask(task.id)}
-className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+  onClick={() => {
+    setSelectedTask(task);
+    setShowForm(true);
+  }}
+  className="bg-indigo-400 px-2 py-1 rounded text-white hover:bg-violet-600"
 >
-Delete
+  Edit
+</button>
+
+<button
+onClick={()=>deleteTask(task.id)}
+className="bg-rose-500 text-white px-3 py-1 rounded hover:bg-red-600"
+>
+  Delete
 </button>
 
 </div>
