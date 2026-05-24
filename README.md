@@ -12,7 +12,6 @@ A task management web application built using React, Firebase Authentication, Cl
 - Mark tasks as completed / incomplete
 - Filter tasks by category
 - Task counter
-- Empty state message
 - Responsive UI built with Tailwind CSS
 - Deployed on Vercel
 
